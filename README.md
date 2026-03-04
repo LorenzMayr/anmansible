@@ -11,4 +11,4 @@ A collection of scripts and playbooks to be used for implementing a Netbox -> An
 - Netbox Script (netbox_script.py)
 - Inventory File for Ansible to connect to Netbox (netbox_inventory.yaml)
 
-  Alot of these files contain placeholders, lines that must be changed are commented.
+  Alot of these files contain placeholders; lines that must be changed are commented.

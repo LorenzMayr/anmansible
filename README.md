@@ -9,3 +9,6 @@ A collection of scripts and playbooks to be used for implementing a Netbox -> An
 - Ansible Playbook for Deployment (config_transfer.yaml)
 - Ansible Python Webhook (netbox_receiver.py)
 - Netbox Script (netbox_script.py)
+- Inventory File for Ansible to connect to Netbox (netbox_inventory.yaml)
+
+  Alot of these files contain placeholders, lines that must be changed are commented.

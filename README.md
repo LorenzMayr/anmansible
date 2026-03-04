@@ -5,7 +5,7 @@ A collection of scripts and playbooks to be used for implementing a Netbox -> An
 
 ## Contents
 
-- Jinja2 Template for Aruba Devices
-- Ansible Playbook for Deployment
-- Ansible Python Webhook
-- Netbox Script
+- Jinja2 Template for Aruba Devices (jinja2_template.txt)
+- Ansible Playbook for Deployment (config_transfer.yaml)
+- Ansible Python Webhook (netbox_receiver.py)
+- Netbox Script (netbox_script.py)

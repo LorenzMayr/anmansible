@@ -1,0 +1,22 @@
+- hosts: "{{ hostname }}"
+  collections:
+    - arubanetworks.aoscx
+    - ansible.utils
+  gather_facts: no
+  vars:
+    ansible_connection: network_cli
+    ansible_network_os: arubanetworks.aoscx.aoscx
+    ansible_user: admin # SSH Username on the Target Device
+    ansible_password: password # SSH Password on the Target device
+    candidate_config: "{{ rendered_config }}" # This is the config received from Netbox
+
+  tasks:
+    
+    - name: Save candidate config to file # Make local backup of received config
+      copy:
+        content: "{{ candidate_config }}"
+        dest: "/home/user/ansible/config/{{ inventory_hostname }}.cfg"
+    
+    - name: Apply changes to AOS-CX # Deploy changes to Device
+      aoscx_config:
+        lines: "{{ candidate_config }}"

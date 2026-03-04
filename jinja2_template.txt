@@ -1,0 +1,112 @@
+hostname {{ device.name }}
+
+{# -------- VLAN Definitions -------- #}
+{% if device.site and device.site.vlans %}
+    {% for vl in device.site.vlans.all() %}
+vlan {{ vl.vid }}
+   name {{ vl.name }}
+    {% endfor %}
+{% endif %}
+
+
+{# ================================
+   FIRST PASS – OUTPUT LAG INTERFACES
+   ================================ #}
+{% for interface in device.interfaces.all() %}
+    {% if interface.type == "lag" %}
+interface lag {{ interface.name }}
+description {{ interface.description }}
+
+        {% if interface.enabled == false %}
+    shutdown
+        {% elif interface.enabled == true %}
+    no shutdown
+        {% endif %}
+
+        {% if interface.mode == "access" %}
+            {% if interface.untagged_vlan %}
+    vlan access {{ interface.untagged_vlan.vid }}
+            {% else %}
+    shutdown
+            {% endif %}
+
+        {% elif interface.mode == "tagged" %}
+            {% if interface.tagged_vlans %}
+                {% for vlan in interface.tagged_vlans.all() %}
+    vlan trunk allowed {{ vlan.vid }}
+                {% endfor %}
+            {% endif %}
+            {% if interface.untagged_vlan %}
+    vlan trunk native {{ interface.untagged_vlan.vid }}
+            {% endif %}
+
+        {% elif interface.mode == "tagged-all" %}
+    vlan trunk allowed all
+            {% if interface.untagged_vlan %}
+    vlan trunk native {{ interface.untagged_vlan.vid }}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+
+{# ================================
+   SECOND PASS – NORMAL INTERFACES
+   ================================ #}
+{% for interface in device.interfaces.all() %}
+    {% if interface.type != "lag" %}
+        {% if interface.mgmt_only == false %}
+
+interface {{ interface.name }}
+description {{ interface.description }}
+
+            {% if interface.enabled == false %}
+    shutdown
+            {% else %}
+    no shutdown
+            {% endif %}
+
+            {% if interface.mode == "access" %}
+                {% if interface.untagged_vlan %}
+    vlan access {{ interface.untagged_vlan.vid }}
+                {% else %}
+    shutdown
+                {% endif %}
+
+            {% elif interface.mode == "tagged" %}
+                {% if interface.tagged_vlans %}
+                    {% for vlan in interface.tagged_vlans.all() %}
+    vlan trunk allowed {{ vlan.vid }}
+                    {% endfor %}
+                {% endif %}
+                {% if interface.untagged_vlan %}
+    vlan trunk native {{ interface.untagged_vlan.vid }}
+                {% endif %}
+
+            {% elif interface.mode == "tagged-all" %}
+    vlan trunk allowed all
+                {% if interface.untagged_vlan %}
+    vlan trunk native {{ interface.untagged_vlan.vid }}
+                {% endif %}
+            {% endif %}
+
+            {% if interface.lag %}
+    lag {{ interface.lag.name }}
+            {% endif %}
+
+        {% else %}
+
+interface {{ interface.name }}
+description Management VLAN
+
+            {% if interface.enabled == false %}
+    shutdown
+            {% else %}
+    no shutdown
+            {% endif %}
+
+    ip address {{ device.primary_ip.address }}
+
+        {% endif %}
+    {% endif %}
+{% endfor %}

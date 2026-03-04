@@ -16,8 +16,8 @@ def configure():
 
     print(hostname)
 
-    os.makedirs("/home/lorenz/ansible/config/", exist_ok=True)
-    config_file = f"/home/lorenz/ansible/config/{hostname}.cfg"
+    os.makedirs("/home/!user!/ansible/config/", exist_ok=True) # Change "!user!" to your Ansible Username
+    config_file = f"/home/!user!/ansible/config/{hostname}.cfg" # Change "!user!" to your Ansible Username
     with open(config_file, "w") as f:
         f.write(str(rendered_config))
 
@@ -29,8 +29,8 @@ def configure():
 
     ansible_command = [
         "ansible-playbook",
-        "-i", "/home/lorenz/ansible/netbox_inventory.yml",
-        "/home/lorenz/ansible/playbooks/config_transfer.yaml",
+        "-i", "/home/!user!/ansible/netbox_inventory.yml", # Change "!user!" to your Ansible Username
+        "/home/!user!/ansible/playbooks/config_transfer.yaml", # Change "!user!" to your Ansible Username
         "--extra-vars", extra_vars, "-vvv"
     ]
     print("Executing:", " ".join(ansible_command))

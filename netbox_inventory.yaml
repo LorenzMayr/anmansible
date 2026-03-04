@@ -1,0 +1,38 @@
+plugin: netbox.netbox.nb_inventory
+api_endpoint: https://10.10.10.10 # IP Address of the Netbox Device
+token: token123 # API Token created in the Netbox Webinterface
+validate_certs: false
+config_context: false
+flatten_custom_fields: true
+
+all:
+  hosts:
+    all:
+      ansible_connection: arubanetworks.aoscx
+      ansible_network_os: arubanetworks.aoscx
+      ansible_httpapi_use_ssl: true
+      ansible_httpapi_validate_certs: false
+
+group_by:
+  - device_types
+
+compose:
+  model: device_types.model
+
+fields:
+  - id: NETBOX_API
+    type: string
+    label: NetBox Host URL
+  - id: NETBOX_TOKEN
+    type: string
+    label: NetBox API Token
+    secret: true
+required:
+  - NETBOX_API
+  - NETBOX_TOKEN
+
+# Example Ansible Tower credential Injector Configuration:
+
+env:
+  NETBOX_API: '{{ NETBOX_API }}'
+  NETBOX_TOKEN: '{{ NETBOX_TOKEN }}'
